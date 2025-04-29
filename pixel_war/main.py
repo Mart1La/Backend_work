@@ -46,11 +46,13 @@ class Carte:
     def is_valid_key(self, key: str):
         return key in self.keys
     
+    """
     def create_new_user_id(self):
         user_id = str(uuid4())  # Génère un nouvel identifiant unique pour l'utilisateur
         self.user[user_id] = 
         return user_id
-    
+    """
+        
     def is_valid_user_id(self, user_id:str):
         return user_id in self.user
 
