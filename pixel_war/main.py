@@ -1,16 +1,25 @@
 from copy import deepcopy
 import time
 from uuid import uuid4
-from fastapi import Cookie, FastAPI, Query
-from fastapi.responses import JSONResponse
+from fastapi import Cookie, FastAPI, Query, Request
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 
+# Instance de FastAPI
 app = FastAPI()
 
-@app.get("/")
+# Fichiers statiques
+app.mount("/static", StaticFiles(directory="web-pixels-war"), name="static")
+
+# Templates
+templates = Jinja2Templates(directory="web-pixel-war")
+
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    return {"message": "Hello World"}
+    return templates.TemplateResponse("pixels-war.html", {"request": Request})
 
 # On peut utiliser dans bash (pour lancer le serveur)
 # uvicorn main:app --reload
