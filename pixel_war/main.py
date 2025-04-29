@@ -6,12 +6,6 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 
-# TRUCS PAS COMPRIS et/ou pas finis:
-#       - create_new_user_id
-
-
-
-
 app = FastAPI()
 
 @app.get("/")
@@ -71,7 +65,6 @@ class Carte:
         # Returns True if key already in, False elsewise
         return key in self.keys
     
-    """ A MODIFIER / VERIFIER"""
     def create_new_user_id(self):
         user_id = str(uuid4())  # Génère un nouvel identifiant unique pour l'utilisateur
         self.user[user_id] = UserInfo(self.data)
@@ -83,7 +76,7 @@ class Carte:
 
 
 cartes : dict[str, Carte] = {
-    "0000": Carte(nx=10, ny=10, timeout_nanos=10_000_000_000),
+    "0000": Carte(nx=100, ny=100, timeout_nanos=10_000_000_000),
     "TEST": Carte(nx=10, ny=10)
 }
 
@@ -175,7 +168,7 @@ async def change_color(nom_carte : str,
                     cookie_key: str = Cookie(alias="key"),
                     cookie_user_id: str = Cookie(alias="id")
                     ):
-    print(type(nom_carte), type(user_id), type(y), type(x), type(r), type(g))
+    
     carte = cartes[nom_carte]
 
     # Vérifications classiques
@@ -195,4 +188,4 @@ async def change_color(nom_carte : str,
         carte.data[x][y] = (r, g, b)
         return JSONResponse(content=0)
     else:
-        return JSONResponse(content={f"Attendre {carte.timeout_nanos-(delta_time_ns)} nanosecondes"})
+        return JSONResponse(content=f"Attendre {carte.timeout_nanos-(delta_time_ns)} nanosecondes")
