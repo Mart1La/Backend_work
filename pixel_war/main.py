@@ -12,22 +12,24 @@ from fastapi.templating import Jinja2Templates
 app = FastAPI()
 
 # Fichiers statiques
-app.mount("/static", StaticFiles(directory="web-pixels-war"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Templates
-templates = Jinja2Templates(directory="web-pixel-war")
+templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
-async def root():
-    return templates.TemplateResponse("pixels-war.html", {"request": Request})
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 # On peut utiliser dans bash (pour lancer le serveur)
 # uvicorn main:app --reload
 
 # Permet d'autoriser le programme a fonctionner
 app.add_middleware(CORSMiddleware,
-                   allow_origins=["*", "localhost:8000"],
-                   allow_credentials=True
+                   allow_origins=["http://localhost:8000"],
+                   allow_credentials=True,
+                   allow_methods=["*"],
+                   allow_headers=["*"]
                    )
 
 """
@@ -193,7 +195,7 @@ async def change_color(nom_carte : str,
     if delta_time_ns >= carte.timeout_nanos:
         user_info.last_edited_time_nanos = time.time_ns()
         user_carte = user_info.last_seen_map
-        user_carte[x][y] = (r, g, b)
+        # user_carte[x][y] = (r, g, b)
         carte.data[x][y] = (r, g, b)
         return JSONResponse(content=0)
     else:
