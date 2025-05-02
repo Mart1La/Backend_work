@@ -9,9 +9,8 @@ dans bash : uvicorn main:app --reload
 Les fichiers sont ici configurés pour une utilisation locale.
 
 To do list:
-    - Remplir case après case dans le bon ordre (une case dispo apres l'autre),
-        ligne par ligne
     - Une fois qu'une ligne est remplie et le bouton entré appuyé, envoyer requete
+    - liberer la nouvelle ligne
     - Colorer les cases selon leur couleur
 
     
@@ -83,6 +82,18 @@ async def get_word():
         "mot": WORDS[nb]
     })
 
+@app.get("/dico/{mot}")
+async def is_in_dictionary(mot :str):
+    with open("wordlist_5_letters.txt", "r") as fichier:
+        WORDS = fichier.read().splitlines()
+    if mot.lower() in WORDS:
+        return JSONResponse({
+            "result": True
+        })
+    else:
+        return JSONResponse({
+            "result": False
+        })
 
 
 
