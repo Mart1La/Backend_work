@@ -172,12 +172,12 @@ async def deltas(nom_carte: str,
         for x in range(carte.nx):
             if carte.data[x][y] != user_carte[x][y]:
                 deltas.append((y, x, *carte.data[x][y]))
-    return {
+    return JSONResponse({
         "id": query_user_id,
         "nx": carte.nx,
         "ny": carte.ny,
         "deltas": deltas
-    }
+    })
 
 # Changement d'un pixel
 @app.get("/api/v1/{nom_carte}/set/{user_id}/{y}/{x}/{r}/{g}/{b}")
