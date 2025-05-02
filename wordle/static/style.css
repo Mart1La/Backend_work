@@ -22,5 +22,9 @@ body {
     width: 70px;
     height: 70px;
     margin: 5px;
-    background-color: black;
+    font-size: 60px;
+    text-align: center;
+    color: rgb(241, 67, 48);
+    font-weight: bold;
+    
     }

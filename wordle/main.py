@@ -6,7 +6,13 @@ Le frontend est constitué du html, css et js. Le Backend du py.
 Pour lancer le serveur en local, on a utilisé la commande suivante
 dans bash : uvicorn main:app --reload
 
-Les fichiers sont ici configurés pour une utilisation locale,
+Les fichiers sont ici configurés pour une utilisation locale.
+
+To do list:
+    - Remplir case après case dans le bon ordre (une case dispo apres l'autre),
+        ligne par ligne
+    - Une fois qu'une ligne est remplie et le bouton entré appuyé, envoyer requete
+    - Colorer les cases selon leur couleur
 
     
 """
@@ -72,11 +78,10 @@ app.add_middleware(CORSMiddleware,
 async def get_word():
     with open("wordlist_5_letters.txt", "r") as fichier:
         WORDS = fichier.read().splitlines()
-    print(WORDS[:10])
     nb = randint(0, len(WORDS)-1)
-    return {
+    return JSONResponse({
         "mot": WORDS[nb]
-    }
+    })
 
 
 
