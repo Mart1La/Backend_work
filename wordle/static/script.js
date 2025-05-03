@@ -1,55 +1,53 @@
-// Le projet a été configuré en local (voir ligne suivante)
-const LOCAL_ADD = "http://127.0.0.1:8000";
+// Le projet a été configuré en local
+const LOCAL = "http://127.0.0.1:8000";
 
-// Le mot change toutes les 10 minutes
-let current_word = change_word();
-let increment = 0 // va compter les lignes complètes
+
+let current_word = change_word();   // constitue le mot à trouver
+let increment = 0                   // va compter les lignes complètes
 
 document.addEventListener("DOMContentLoaded", () => {
 
     // change le mot tous les jours
     setInterval(() => change_word(), 24*60*60_000);
 
-
+    // Tracé de la grille
     let grille = document.getElementById("grid");
     dessin_grille(grille);
 
+    // Gestion de la grille
     grille.addEventListener("click", (event) => {
+        
         const cible = event.target;
-        console.log(cible.id);
-
         // Extraction de la colonne et de la ligne de la cible a partir de l'id
         const [row, col] = cible.id.split(" ").map(Number);
-
 
         // Vérifie que le clic se fait bien sur un div de la grille
         if (cible.tagName === "DIV" && cible.parentElement === grille) {
 
             // Cas ou c'est la premiere ligne, premiere colonne
             if (row === 0 && col === 0) {
-                let user_input = prompt("Please enter a capital letter");
+                let user_input = prompt("Entrer une lettre majuscule");
                 if (user_input === null || user_input === "") {
                     cible.innerHTML = ""
                 } else if (user_input.length === 1 && /^[A-Z]+$/.test(user_input)) {
-                    console.log("ok pour col 0 et row 0");
+                    // console.log("ok pour col 0 et row 0");
                     cible.innerHTML = user_input;
                 } else {
-                    console.log("Erreur: format incorrect pour c0 r0")
+                    console.log("Erreur: format incorrect")
                 }
             
             // Cas ou c'est la premiere colonne (on check la derniere colonne de la ligne d'avant)
             } else if (col === 0) {
-                console.log(`increment=${increment}`)
                 const prevCell = document.getElementById(`${row - 1} 4`);
                 if (prevCell && prevCell.innerHTML !== "" && increment == row) {
-                    let user_input = prompt("Please enter a capital letter");
+                    let user_input = prompt("Entrer une lettre majuscule");
                     if (user_input === null || user_input === "") {
                         cible.innerHTML = ""
                     } else if (user_input.length === 1 && /^[A-Z]+$/.test(user_input)) {
-                        console.log("ok pour col 0 et row qcq");
+                        // console.log("ok pour col 0 et row qcq");
                         cible.innerHTML = user_input;
                     } else {
-                        console.log("Erreur: format incorrect pour c0 rqcq")
+                        console.log("Erreur: format incorrect")
                     }
                 }
 
@@ -57,11 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 const prevCell = document.getElementById(`${row} ${col - 1}`);
                 if (prevCell && prevCell.innerHTML !== "") {
-                    let user_input = prompt("Please enter a capital letter");
+                    let user_input = prompt("Entrer une lettre majuscule");
                     if (user_input === null || user_input === "") {
                         cible.innerHTML = ""
                     } else if (user_input.length === 1 && /^[A-Z]+$/.test(user_input)) {
-                        console.log("ok pour le reste");
+                        // console.log("ok pour le reste");
                         cible.innerHTML = user_input;
                     } else {
                         console.log("Erreur: format incorrect pour le reste")
@@ -71,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-
+    // Gère l'appuie du bouton "valider"
     let elt = document.getElementById("enter")
     elt.addEventListener("click", () => {verif(increment)})
 });
@@ -90,21 +88,20 @@ function dessin_grille(grid) {
     }
 }
 
-// 2. Permet de récupérer un mot
+// 2. Permet de récupérer un mot, ce sera le mot du jour
 function change_word() {
-    fetch(`${LOCAL_ADD}/solution/motdujour`, { credentials: "include" })
+    fetch(`${LOCAL}/solution/motdujour`, { credentials: "include" })
         .then((response) => response.json())
         .then((json) => {
             current_word = json.mot;
-            console.log(current_word);
+            // console.log(current_word);
         });
 }
 
-
-// 3. Verifie la ligne n, colore les cases si le mot existe et passe a la ligne suivante
+// 3. Verifie la ligne n, et appelle les fonctions nécessaires en conséquence
 function verif(n) {
-    let c = 0; // Compte les chaines de caractere non nulles.
-    let concatenation = "";
+    let c = 0;                  // Va compter les chaines de caractere non nulles.
+    let concatenation = "";     // Va être le mot écrit dans les cases
     let elements = document.getElementsByClassName(n.toString());
 
     for (let i = 0; i < elements.length; i++) {
@@ -114,18 +111,18 @@ function verif(n) {
         }
     }
 
-    console.log(`c=${c}`);
-
-    // demande si le mot fait bien 5 lettres
+    // Demande si le mot fait bien 5 lettres
     if (c === 5) { 
-        fetch(`${LOCAL_ADD}/dico/${concatenation}`, { credentials: "include" })
+
+        // Vérifie que le mot est dans le dictionnaire francais
+        fetch(`${LOCAL}/dico/${concatenation}`, { credentials: "include" })
             .then((response) => response.json())
             .then((json) => {
                 let the_result = json.result;
-                if (the_result === true) {  // Demande si le mot existe dans le dictionnaire
+                if (the_result === true) {  // Si le mot est dans le dictionnaire,
                     increment = n + 1
-                    put_color(elements, concatenation)
-                    put_an_end(n, concatenation)
+                    put_color(elements, concatenation)      // Gestion des couleurs
+                    put_an_end(n, concatenation)            // Gestion de la fin éventuelle
                 } else {
                     console.log("Mot inconnu, veuillez réessayer avec un autre mot")
                 }
@@ -135,38 +132,12 @@ function verif(n) {
     }
 }
 
-// // 4. Met les couleurs sur la ligne n (gestion des duplicats a faire)
-// function put_color(elements, concatenation) {
-//     let list_real_word = current_word.split("");
-//     let list_line_word = concatenation.toLowerCase().split("")
-
-//     console.log(list_real_word)
-//     console.log(list_line_word)
-
-
-//     // On marque d'abord les positions exactes en vert
-//     for (let i = 0; i < elements.length; i++) {
-//         if (list_real_word.includes(list_line_word[i])) {
-//             if (list_real_word[i] === list_line_word[i]) {
-//                 elements[i].style.backgroundColor = `rgb(23, 194, 23)`;
-//             } else {
-//                 elements[i].style.backgroundColor = `rgb(249, 148, 15)`;
-//             }
-//         } else {
-//             elements[i].style.backgroundColor = `rgb(53, 49, 42)`
-//         }
-//     }
-// }
-
-// 4. Met les couleurs sur la ligne n (gestion des duplicats a faire)
+// 4. Met les couleurs sur la ligne n (gestion des duplicats ok)
 function put_color(elements, concatenation) {
     let list_real_word = current_word.split("");
     let list_line_word = concatenation.toLowerCase().split("")
 
-    console.log(list_real_word)
-    console.log(list_line_word)
-
-    // Aucune lettre du mot du jour a été trouvée au départ
+    // Variable intermédiaires utiles pour les couleurs
     let usedInRealWord = new Array(list_real_word.length).fill(false);
     let remaining = []
 
@@ -178,16 +149,18 @@ function put_color(elements, concatenation) {
         } else {
             remaining.push(list_real_word[i])
         } }
-    console.log(remaining)
+    // console.log(remaining)
         
     // On marque ensuite les positions orange: ce sont les lettres de la ligne
-    // qui sont dans les lettres marquees false du mot du jour
+    // qui sont dans les lettres marquees "false" dans usedInRealWord
     for (let i = 0; i < elements.length; i++) {
-        if (!usedInRealWord[i]) {       // Si false
+        if (!usedInRealWord[i]) {                           // Si false
             if (remaining.includes(list_line_word[i])) {
                 elements[i].style.backgroundColor = `rgb(249, 148, 15)`;
                 let index = remaining.indexOf(list_line_word[i])
-                remaining.splice(index, 1)
+
+                // Important pour éviter que les couleurs induisent en erreur avec les doublons
+                remaining.splice(index, 1)  
             } else {
                 elements[i].style.backgroundColor = `rgb(53, 49, 42)`
             }
@@ -195,14 +168,13 @@ function put_color(elements, concatenation) {
     }
 }
 
-
-
 // 5. Gere la fin du jeu
 function put_an_end(n, concatenation) {
     div_bouton = document.getElementById("enter_button")
     bouton = document.getElementById("enter")
     let for_comparison = concatenation.toLowerCase()
 
+    // Si on a perdu
     if (n === 5 && for_comparison !== current_word) {
         increment = -10
         bouton.remove()
@@ -212,6 +184,7 @@ function put_an_end(n, concatenation) {
         div_bouton.style.color = "red";
     }
 
+    // Si on a gagné
     if (for_comparison === current_word) {
         increment = -10
         bouton.remove()
@@ -221,5 +194,4 @@ function put_an_end(n, concatenation) {
         div_bouton.style.color = "green";
 
     }
-    
 }
