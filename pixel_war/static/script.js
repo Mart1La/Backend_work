@@ -3,7 +3,7 @@ const PIXEL_URL = "http://127.0.0.1:8000"
 
 // ON PEUT CHANGER LA CARTE ICI : 2 choix (TEST ou 0000)
 // Il faudra recharger la page pour changer de carte
-const MAP_ID = "0000"
+const MAP_ID = "TEST"
 
 // Autre constante utile :
 const PREFIX = `${PIXEL_URL}/api/v1/${MAP_ID}`

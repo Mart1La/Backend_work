@@ -11,7 +11,7 @@ Le choix de la map (TEST ou 0000) se fait "à la main" et
     - si 0000 est choisi, le délai entre deux changements est 10s
 
 Les fichiers sont ici configurés pour une utilisation locale,
-on pourra changer la ligne 44 du py, la ligne 2 du js
+on pourra changer la ligne 44 du py, la ligne 2 du js.
     
 """
 
@@ -210,5 +210,6 @@ async def change_color(nom_carte : str,
         carte.data[x][y] = (r, g, b)
         return JSONResponse(content=0)
     else:
+        # On peut voir le délai d'attente dans la console bash
         print(f"Attendre {round((carte.timeout_nanos-(delta_time_ns))/1_000_000_000, 2)} seconde(s)")
         return JSONResponse(content=f"Attendre {carte.timeout_nanos-(delta_time_ns)} nanosecondes")
