@@ -9,18 +9,14 @@ dans bash : uvicorn main:app --reload
 Les fichiers sont ici configurés pour une utilisation locale.
 
 To do list:
-    - Une fois qu'une ligne est remplie et le bouton entré appuyé, envoyer requete
-    - liberer la nouvelle ligne
-    - Colorer les cases selon leur couleur
+    - Gerer les lettres en double (si le mot est "taxes" et qu'on rentre "teeth", il
+    faut que seul le premier "t" soit en vert, et le premier "e" en orange)
+    - Commenter et afficher ou non les infos avec console.log
 
-    
 """
 
 # Importation des modules utiles
-from copy import deepcopy
-import time
-from uuid import uuid4
-from fastapi import Cookie, FastAPI, Query, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles

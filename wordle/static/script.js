@@ -7,7 +7,8 @@ let increment = 0 // va compter les lignes complètes
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    setInterval(() => change_word(), 10*60_000);
+    // change le mot tous les jours
+    setInterval(() => change_word(), 24*60*60_000);
 
 
     let grille = document.getElementById("grid");
@@ -76,22 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Fonctions utilisées :
-// 1. Permet le rafraichissement de la grille
-function refresh(user_id) {
-    fetch(`${PREFIX}/deltas?id=${user_id}`, { credentials: "include" })
-        .then((response) => response.json())
-        .then((json) => {
-            let modif = json.deltas;
-            console.log(modif);
-
-            modif.forEach((element) => {
-                let pixel = document.getElementById(`${element[0]} ${element[1]}`);
-                pixel.style.backgroundColor = `rgb(${element[2]}, ${element[3]}, ${element[4]})`;
-            });
-        });
-}
-
-// 2. Permet de dessiner la grille de base
+// 1. Permet de dessiner la grille de base
 function dessin_grille(grid) {
     for (let pas1 = 0; pas1 < 6; pas1++) {
         for (let pas2 = 0; pas2 < 5; pas2++) {
@@ -104,7 +90,7 @@ function dessin_grille(grid) {
     }
 }
 
-// 3. Permet de récupérer un mot
+// 2. Permet de récupérer un mot
 function change_word() {
     fetch(`${LOCAL_ADD}/solution/motdujour`, { credentials: "include" })
         .then((response) => response.json())
@@ -115,9 +101,9 @@ function change_word() {
 }
 
 
-// 4. Verifie la ligne n
+// 3. Verifie la ligne n, colore les cases si le mot existe et passe a la ligne suivante
 function verif(n) {
-    let c = 0; // Corrected variable name
+    let c = 0; // Compte les chaines de caractere non nulles.
     let concatenation = "";
     let elements = document.getElementsByClassName(n.toString());
 
@@ -130,18 +116,71 @@ function verif(n) {
 
     console.log(`c=${c}`);
 
-    if (c === 5) { // demande si le mot existe dans le dictionnaire
+    // demande si le mot fait bien 5 lettres
+    if (c === 5) { 
         fetch(`${LOCAL_ADD}/dico/${concatenation}`, { credentials: "include" })
             .then((response) => response.json())
             .then((json) => {
                 let the_result = json.result;
-                if (the_result === true) {
+                if (the_result === true) {  // Demande si le mot existe dans le dictionnaire
                     increment = n + 1
-                    console.log(increment)
+                    put_color(elements, concatenation)
+                    put_an_end(n, concatenation)
                 } else {
                     console.log("Mot inconnu, veuillez réessayer avec un autre mot")
                 }
             });
+        
 
     }
+}
+
+// 4. Met les couleurs sur la ligne n (gestion des duplicats a faire)
+function put_color(elements, concatenation) {
+    let list_real_word = current_word.split("");
+    let list_line_word = concatenation.toLowerCase().split("")
+
+    console.log(list_real_word)
+    console.log(list_line_word)
+
+
+    // On marque d'abord les positions exactes en vert
+    for (let i = 0; i < elements.length; i++) {
+        if (list_real_word.includes(list_line_word[i])) {
+            if (list_real_word[i] === list_line_word[i]) {
+                elements[i].style.backgroundColor = `rgb(23, 194, 23)`;
+            } else {
+                elements[i].style.backgroundColor = `rgb(249, 148, 15)`;
+            }
+        } else {
+            elements[i].style.backgroundColor = `rgb(53, 49, 42)`
+        }
+    }
+}
+
+// 5. Gere la fin du jeu
+function put_an_end(n, concatenation) {
+    div_bouton = document.getElementById("enter_button")
+    bouton = document.getElementById("enter")
+    let for_comparison = concatenation.toLowerCase()
+
+    if (n === 5 && for_comparison !== current_word) {
+        increment = -10
+        bouton.remove()
+
+        // Un peu de css
+        div_bouton.innerHTML = "Perdu! Le mot était: " + current_word;
+        div_bouton.style.color = "red";
+    }
+
+    if (for_comparison === current_word) {
+        increment = -10
+        bouton.remove()
+
+        // Un peu de css
+        div_bouton.innerHTML = "Gagné! Le mot était: " + current_word;
+        div_bouton.style.color = "green";
+
+    }
+    
 }
