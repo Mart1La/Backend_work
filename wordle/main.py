@@ -9,8 +9,7 @@ dans bash : uvicorn main:app --reload
 Les fichiers sont ici configurés pour une utilisation locale.
 
 To do list:
-    - Gerer les lettres en double (si le mot est "taxes" et qu'on rentre "teeth", il
-    faut que seul le premier "t" soit en vert, et le premier "e" en orange)
+    - Verifier que c'est bon
     - Commenter et afficher ou non les infos avec console.log
 
 """

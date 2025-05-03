@@ -135,6 +135,29 @@ function verif(n) {
     }
 }
 
+// // 4. Met les couleurs sur la ligne n (gestion des duplicats a faire)
+// function put_color(elements, concatenation) {
+//     let list_real_word = current_word.split("");
+//     let list_line_word = concatenation.toLowerCase().split("")
+
+//     console.log(list_real_word)
+//     console.log(list_line_word)
+
+
+//     // On marque d'abord les positions exactes en vert
+//     for (let i = 0; i < elements.length; i++) {
+//         if (list_real_word.includes(list_line_word[i])) {
+//             if (list_real_word[i] === list_line_word[i]) {
+//                 elements[i].style.backgroundColor = `rgb(23, 194, 23)`;
+//             } else {
+//                 elements[i].style.backgroundColor = `rgb(249, 148, 15)`;
+//             }
+//         } else {
+//             elements[i].style.backgroundColor = `rgb(53, 49, 42)`
+//         }
+//     }
+// }
+
 // 4. Met les couleurs sur la ligne n (gestion des duplicats a faire)
 function put_color(elements, concatenation) {
     let list_real_word = current_word.split("");
@@ -143,20 +166,36 @@ function put_color(elements, concatenation) {
     console.log(list_real_word)
     console.log(list_line_word)
 
+    // Aucune lettre du mot du jour a été trouvée au départ
+    let usedInRealWord = new Array(list_real_word.length).fill(false);
+    let remaining = []
 
     // On marque d'abord les positions exactes en vert
     for (let i = 0; i < elements.length; i++) {
-        if (list_real_word.includes(list_line_word[i])) {
-            if (list_real_word[i] === list_line_word[i]) {
-                elements[i].style.backgroundColor = `rgb(23, 194, 23)`;
-            } else {
-                elements[i].style.backgroundColor = `rgb(249, 148, 15)`;
-            }
+        if (list_real_word[i] === list_line_word[i]) {
+            elements[i].style.backgroundColor = `rgb(23, 194, 23)`;
+            usedInRealWord[i] = true
         } else {
-            elements[i].style.backgroundColor = `rgb(53, 49, 42)`
-        }
+            remaining.push(list_real_word[i])
+        } }
+    console.log(remaining)
+        
+    // On marque ensuite les positions orange: ce sont les lettres de la ligne
+    // qui sont dans les lettres marquees false du mot du jour
+    for (let i = 0; i < elements.length; i++) {
+        if (!usedInRealWord[i]) {       // Si false
+            if (remaining.includes(list_line_word[i])) {
+                elements[i].style.backgroundColor = `rgb(249, 148, 15)`;
+                let index = remaining.indexOf(list_line_word[i])
+                remaining.splice(index, 1)
+            } else {
+                elements[i].style.backgroundColor = `rgb(53, 49, 42)`
+            }
+        } 
     }
 }
+
+
 
 // 5. Gere la fin du jeu
 function put_an_end(n, concatenation) {
